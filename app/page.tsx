@@ -201,12 +201,21 @@ function RequestAccessModal({ onClose, variant = 'pilot' }: { onClose: () => voi
   };
   const labelStyle: React.CSSProperties = { display: 'block', fontSize: 12, fontWeight: 600, color: 'rgba(255,255,255,0.55)', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.06em' };
 
+  // Modal a11y: Escape closes; backdrop click also closes (presentation role keeps semantics clear)
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [onClose]);
+
   return (
     <div
+      role="presentation"
       onClick={onClose}
       style={{ position: 'fixed', inset: 0, background: 'rgba(4,47,46,0.85)', backdropFilter: 'blur(8px)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}
     >
       <div
+        role="presentation"
         onClick={e => e.stopPropagation()}
         style={{ background: 'linear-gradient(135deg, #042F2E 0%, #0a4a44 100%)', borderRadius: 20, padding: '32px 24px', maxWidth: 480, width: '100%', maxHeight: '90vh', overflowY: 'auto', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 32px 80px rgba(0,0,0,0.5)', position: 'relative' }}
       >
