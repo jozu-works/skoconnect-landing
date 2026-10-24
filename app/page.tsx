@@ -1099,8 +1099,8 @@ export default function LandingPage() {
             </div>
             <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: 13 }}>
               Questions?{' '}
-              <a href="mailto:support.skoconnect@agentmail.to" style={{ color: 'rgba(255,255,255,0.55)', textDecoration: 'underline' }}>
-                support.skoconnect@agentmail.to
+              <a href="mailto:support@skoconnect.com" style={{ color: 'rgba(255,255,255,0.55)', textDecoration: 'underline' }}>
+                support@skoconnect.com
               </a>
             </p>
           </div>
@@ -1136,7 +1136,7 @@ export default function LandingPage() {
                     { label: 'For Schools', href: '#for-schools' },
                     { label: 'Download App', href: 'https://play.google.com/store/apps/details?id=com.skoconnect.skoconnect' },
                     { label: 'Security', href: 'https://admin.skoconnect.com/security' },
-                    { label: 'Pricing & pilot details', href: 'mailto:info.skoconnect@agentmail.to?subject=Pricing%20Inquiry', note: 'Pilot participation is free for participating schools. We’ll share full-rollout pricing before the pilot ends; no school is charged automatically.' },
+                    { label: 'Pricing & pilot details', href: 'mailto:info@skoconnect.com?subject=Pricing%20Inquiry', note: 'Pilot participation is free for participating schools. We’ll share full-rollout pricing before the pilot ends; no school is charged automatically.' },
                   ].map(l => (
                     <li key={l.label}><a href={l.href} style={{ color: '#A8A29E', fontSize: 14, textDecoration: 'none', transition: 'color 0.2s' }}
                       onMouseEnter={e => (e.currentTarget.style.color = '#fff')}
@@ -1153,8 +1153,8 @@ export default function LandingPage() {
                 <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 12 }}>
                   {[
                     { label: 'About', href: 'https://admin.skoconnect.com/about' },
-                    { label: 'Blog', href: 'mailto:info.skoconnect@agentmail.to?subject=Blog%20Inquiry' },
-                    { label: 'Contact', href: 'mailto:support.skoconnect@agentmail.to' },
+                    { label: 'Blog', href: 'mailto:info@skoconnect.com?subject=Blog%20Inquiry' },
+                    { label: 'Contact', href: 'mailto:support@skoconnect.com' },
                     { label: 'Privacy Policy', href: 'https://admin.skoconnect.com/privacy' },
                     { label: 'Terms', href: 'https://admin.skoconnect.com/terms' },
                   ].map(l => (
