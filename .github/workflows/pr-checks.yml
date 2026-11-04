@@ -1,0 +1,53 @@
+name: PR Checks
+
+# Ported from jozu-works/SkoConnect pr-checks.yml (2026-11-04, staging-lane).
+# Adapted: this is a static Next export — no functions/Firestore/emulators.
+# Adapted: SkoConnect's workflow-sync-check (new workflow files must be on main
+# first) is omitted from THIS enabling PR by necessity — every workflow here is
+# new and not yet on main, so the check would be permanently red until merged.
+# Re-add it after this PR lands if Dre wants the same develop-side guard here.
+# No ESLint config exists in this repo yet (`next lint` prompts interactively);
+# lint step lands when an .eslintrc does (same ponytail note as deploy-landing.yml).
+on:
+  pull_request:
+    branches:
+      - develop
+      - main
+    types: [opened, synchronize, reopened]
+
+concurrency:
+  group: pr-checks-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  build-smoke:
+    name: Build + Smoke
+    runs-on: arc-runners-landing
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - run: npm ci
+
+      - name: Build
+        run: npm run build
+        env:
+          # GA4 comes from repo secret at build time; on first runs before the
+          # secret exists this resolves empty and the env-gated component skips.
+          NEXT_PUBLIC_GA4_ID: ${{ secrets.NEXT_PUBLIC_GA4_ID }}
+
+      - name: Smoke — export artifact sanity
+        run: |
+          test -f out/index.html || { echo "::error::out/index.html missing"; exit 1; }
+          test -f out/404.html || { echo "::error::out/404.html missing"; exit 1; }
+          grep -qi "<html" out/index.html || { echo "::error::index.html empty/malformed"; exit 1; }
+          # security headers that firebase.json promises must be declared
+          grep -q "X-Frame-Options" firebase.json || { echo "::error::firebase.json lost X-Frame-Options header"; exit 1; }
+          echo "Smoke OK: index + 404 exported, headers declared"
+
+
