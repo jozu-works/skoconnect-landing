@@ -45,6 +45,9 @@ jobs:
         run: |
           test -f out/index.html || { echo "::error::out/index.html missing"; exit 1; }
           test -f out/404.html || { echo "::error::out/404.html missing"; exit 1; }
+          # /enroll app-link fallback route (F7): must export — it is the
+          # desktop/unsupported-device target of the QR handoff URL.
+          test -f out/enroll.html || { echo "::error::out/enroll.html missing"; exit 1; }
           grep -qi "<html" out/index.html || { echo "::error::index.html empty/malformed"; exit 1; }
           # security headers that firebase.json promises must be declared
           grep -q "X-Frame-Options" firebase.json || { echo "::error::firebase.json lost X-Frame-Options header"; exit 1; }
