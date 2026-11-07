@@ -76,15 +76,16 @@ describe('EnrollFallback — mobile', () => {
     expect(mockRedirect).toHaveBeenCalledWith(buildAndroidIntentUrl('?school=ABC123'));
   });
 
-  it('offers the Play Store fallback on non-Android mobile (iOS)', async () => {
-    setLocation('', IOS_UA);
+  it('shows the Android-only guidance with the school code on non-Android mobile (iOS)', async () => {
+    setLocation('?school=ABC123', IOS_UA);
     render(<EnrollFallback />);
 
     expect(
-      await screen.findByText(/opening the skoconnect app/i),
+      await screen.findByText(/skoconnect is currently available on android/i),
     ).toBeInTheDocument();
+    expect(screen.getByText('ABC123')).toBeInTheDocument();
     expect(
-      screen.getByRole('link', { name: /get skoconnect on google play/i }),
+      screen.getByRole('link', { name: /skoconnect on google play/i }),
     ).toHaveAttribute('href', PLAY_STORE_URL);
     expect(mockRedirect).not.toHaveBeenCalled();
   });

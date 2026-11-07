@@ -19,16 +19,25 @@ export function buildAndroidIntentUrl(query: string): string {
   return `intent://skoconnect.com/enroll${qs}#Intent;scheme=https;package=${ANDROID_PACKAGE};S.browser_fallback_url=${fallback};end`;
 }
 
+type Device = 'android' | 'ios' | 'desktop';
+
 function isAndroid(ua: string): boolean {
   return /android/i.test(ua);
 }
 
-function isMobile(ua: string): boolean {
-  return /android|iphone|ipad|ipod|mobile/i.test(ua);
+function isAppleMobile(ua: string): boolean {
+  return /iphone|ipad|ipod/i.test(ua) || (/macintosh/i.test(ua) && 'ontouchend' in document);
+}
+
+function detectDevice(ua: string): Device {
+  if (isAndroid(ua)) return 'android';
+  if (isAppleMobile(ua)) return 'ios';
+  if (/mobile/i.test(ua)) return 'ios'; // other mobile — no app exists; same honest state
+  return 'desktop';
 }
 
 export default function EnrollFallback() {
-  const [device, setDevice] = useState<'mobile' | 'desktop'>('desktop');
+  const [device, setDevice] = useState<Device>('desktop');
   const [query, setQuery] = useState('');
   const [schoolCode, setSchoolCode] = useState('');
   const [showFallback, setShowFallback] = useState(false);
@@ -40,15 +49,13 @@ export default function EnrollFallback() {
     if (code) setSchoolCode(code);
 
     const ua = window.navigator.userAgent;
-    const mobile = isMobile(ua);
-    setDevice(mobile ? 'mobile' : 'desktop');
+    const detected = detectDevice(ua);
+    setDevice(detected);
 
-    if (mobile && isAndroid(ua)) {
+    if (detected === 'android') {
       // Attempt the verified App Links intent; Play Store is Chrome's
       // browser_fallback_url if the app is not installed.
       redirect(buildAndroidIntentUrl(qs));
-    }
-    if (mobile) {
       const t = setTimeout(() => setShowFallback(true), 2500);
       return () => clearTimeout(t);
     }
@@ -82,7 +89,7 @@ export default function EnrollFallback() {
       {/* ── Card ── */}
       <div className="flex-1 flex items-center justify-center px-6 py-16">
         <div className="w-full max-w-lg bg-white border border-surface-200 rounded-card shadow-card p-8 md:p-10 text-center">
-          {device === 'mobile' ? (
+          {device === 'android' ? (
             <>
               <div
                 className="mx-auto mb-6 h-12 w-12 rounded-full border-[3px] border-brand-100 border-t-brand-600 animate-spin"
@@ -95,7 +102,7 @@ export default function EnrollFallback() {
               <p className="text-body-md text-ink-500">
                 If nothing happens, the app may not be installed on this device.
               </p>
-              {(showFallback || !isAndroid(typeof navigator !== 'undefined' ? navigator.userAgent : '')) && (
+              {showFallback && (
                 <div className="mt-8">
                   <a
                     href={PLAY_STORE_URL}
@@ -105,6 +112,34 @@ export default function EnrollFallback() {
                   </a>
                 </div>
               )}
+            </>
+          ) : device === 'ios' ? (
+            <>
+              <h1 className="font-display text-display-sm text-ink-800 mb-3">
+                SkoConnect is currently available on Android
+              </h1>
+              <p className="text-body-md text-ink-500">
+                Enrollment is done in the SkoConnect mobile app using the school
+                code your school gave you (or the QR code on your enrollment
+                letter). On this iPhone/iPad, please use a school-provided
+                enrollment channel or continue on an Android device.
+              </p>
+              {schoolCode && (
+                <p className="mt-6 text-body-md text-ink-600">
+                  Your school code:{' '}
+                  <span className="font-mono font-semibold text-brand-700 tracking-wider">
+                    {schoolCode}
+                  </span>
+                </p>
+              )}
+              <div className="mt-8">
+                <a
+                  href={PLAY_STORE_URL}
+                  className="inline-flex items-center justify-center rounded-button bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold px-6 py-3 transition-colors"
+                >
+                  SkoConnect on Google Play
+                </a>
+              </div>
             </>
           ) : (
             <>
