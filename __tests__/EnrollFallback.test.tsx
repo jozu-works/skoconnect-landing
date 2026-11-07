@@ -74,6 +74,13 @@ describe('EnrollFallback — mobile', () => {
     ).toBeInTheDocument();
     await waitFor(() => expect(mockRedirect).toHaveBeenCalledTimes(1));
     expect(mockRedirect).toHaveBeenCalledWith(buildAndroidIntentUrl('?school=ABC123'));
+    // User-activated launch path is always offered (Chrome blocks
+    // gesture-less app opens), and the school code stays visible.
+    expect(screen.getByRole('link', { name: /open the app/i })).toHaveAttribute(
+      'href',
+      buildAndroidIntentUrl('?school=ABC123'),
+    );
+    expect(screen.getByText('ABC123')).toBeInTheDocument();
   });
 
   it('shows the Android-only guidance with the school code on non-Android mobile (iOS)', async () => {

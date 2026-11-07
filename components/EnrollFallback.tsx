@@ -99,18 +99,41 @@ export default function EnrollFallback() {
               <h1 className="font-display text-display-sm text-ink-800 mb-3">
                 Opening the SkoConnect app…
               </h1>
-              <p className="text-body-md text-ink-500">
-                If nothing happens, the app may not be installed on this device.
+              {schoolCode && (
+                <p className="text-body-md text-ink-600">
+                  Your school code:{' '}
+                  <span className="font-mono font-semibold text-brand-700 tracking-wider">
+                    {schoolCode}
+                  </span>
+                </p>
+              )}
+              <p className="text-body-md text-ink-500 mt-3">
+                If nothing happens, tap below — some browsers require a tap to
+                open an app.
               </p>
-              {showFallback && (
-                <div className="mt-8">
+              <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+                {/* User-activated launch: browsers can block app opens that
+                    happen without a gesture, so always offer the tap path. */}
+                <a
+                  href={buildAndroidIntentUrl(query)}
+                  className="inline-flex items-center justify-center rounded-button bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold px-6 py-3 transition-colors"
+                >
+                  Open the app
+                </a>
+                {showFallback && (
                   <a
                     href={PLAY_STORE_URL}
-                    className="inline-flex items-center justify-center rounded-button bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold px-6 py-3 transition-colors"
+                    className="inline-flex items-center justify-center rounded-button border border-surface-300 hover:border-brand-300 text-ink-600 hover:text-brand-700 text-sm font-semibold px-6 py-3 transition-colors"
                   >
                     Get SkoConnect on Google Play
                   </a>
-                </div>
+                )}
+              </div>
+              {showFallback && schoolCode && (
+                <p className="text-body-sm text-ink-400 mt-4">
+                  After installing, open the app and enter your school code
+                  above to continue enrollment.
+                </p>
               )}
             </>
           ) : device === 'ios' ? (
@@ -121,8 +144,8 @@ export default function EnrollFallback() {
               <p className="text-body-md text-ink-500">
                 Enrollment is done in the SkoConnect mobile app using the school
                 code your school gave you (or the QR code on your enrollment
-                letter). On this iPhone/iPad, please use a school-provided
-                enrollment channel or continue on an Android device.
+                letter). Please use a school-provided enrollment channel or
+                continue on an Android device.
               </p>
               {schoolCode && (
                 <p className="mt-6 text-body-md text-ink-600">
