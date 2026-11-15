@@ -197,7 +197,7 @@ function RequestAccessModal({ onClose }: { onClose: () => void }) {
   const inputStyle: React.CSSProperties = {
     width: '100%', padding: '10px 14px', borderRadius: 8,
     border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(255,255,255,0.06)',
-    color: '#fff', fontSize: 14, outline: 'none', fontFamily: 'inherit',
+    color: '#fff', fontSize: 16, outline: 'none', fontFamily: 'inherit',
   };
   const labelStyle: React.CSSProperties = { display: 'block', fontSize: 12, fontWeight: 600, color: 'rgba(255,255,255,0.55)', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.06em' };
 
@@ -219,7 +219,7 @@ function RequestAccessModal({ onClose }: { onClose: () => void }) {
         onClick={e => e.stopPropagation()}
         style={{ background: 'linear-gradient(135deg, #042F2E 0%, #0a4a44 100%)', borderRadius: 20, padding: '32px 24px', maxWidth: 480, width: '100%', maxHeight: '90vh', overflowY: 'auto', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 32px 80px rgba(0,0,0,0.5)', position: 'relative' }}
       >
-        <button onClick={onClose} style={{ position: 'absolute', top: 16, right: 16, background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', fontSize: 22, lineHeight: 1 }}>×</button>
+        <button aria-label="Close dialog" className="lp-close-btn" onClick={onClose} style={{ position: 'absolute', top: 16, right: 16, background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', fontSize: 22, lineHeight: 1 }}>×</button>
 
         {status === 'success' ? (
           <div style={{ textAlign: 'center', padding: '24px 0' }}>
@@ -237,19 +237,19 @@ function RequestAccessModal({ onClose }: { onClose: () => void }) {
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div>
                 <label style={labelStyle}>School Name *</label>
-                <input required style={inputStyle} placeholder="St. Mary's Primary School" value={form.school_name} onChange={e => setForm(f => ({ ...f, school_name: e.target.value }))} />
+                <input required autoComplete="organization" enterKeyHint="next" style={inputStyle} placeholder="St. Mary's Primary School" value={form.school_name} onChange={e => setForm(f => ({ ...f, school_name: e.target.value }))} />
               </div>
               <div>
                 <label style={labelStyle}>Your Name *</label>
-                <input required style={inputStyle} placeholder="Principal Jane Smith" value={form.contact_name} onChange={e => setForm(f => ({ ...f, contact_name: e.target.value }))} />
+                <input required autoComplete="name" enterKeyHint="next" style={inputStyle} placeholder="Principal Jane Smith" value={form.contact_name} onChange={e => setForm(f => ({ ...f, contact_name: e.target.value }))} />
               </div>
               <div>
                 <label style={labelStyle}>Work Email *</label>
-                <input required type="email" style={inputStyle} placeholder="principal@school.edu" value={form.contact_email} onChange={e => setForm(f => ({ ...f, contact_email: e.target.value }))} />
+                <input required type="email" autoComplete="email" inputMode="email" enterKeyHint="next" style={inputStyle} placeholder="principal@school.edu" value={form.contact_email} onChange={e => setForm(f => ({ ...f, contact_email: e.target.value }))} />
               </div>
               <div>
                 <label style={labelStyle}>Phone (optional)</label>
-                <input style={inputStyle} placeholder="+1 (555) 000-0000" value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} />
+                <input type="tel" autoComplete="tel" inputMode="tel" enterKeyHint="done" style={inputStyle} placeholder="+1 (555) 000-0000" value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} />
               </div>
               <div>
                 <label style={labelStyle}>How did you hear about us? (optional)</label>
@@ -501,6 +501,15 @@ export default function LandingPage() {
           min-height: 44px;
         }
 
+        /* M-7: coarse-pointer touch targets >= 44px (fine-pointer desktop untouched) */
+        @media (pointer: coarse) {
+          .lp-close-btn { width: 44px; height: 44px; }
+          .lp-play-badge { min-height: 44px; }
+          .lp-signin-link { min-height: 44px; }
+          .lp-mailto { display: inline-flex; align-items: center; min-height: 44px; padding: 0 8px; }
+          .lp-footer-link { display: inline-flex; align-items: center; min-height: 44px; }
+        }
+
         /* M-5: nav link tap targets >= 24px */
         .lp-nav-link { display: inline-flex; align-items: center; min-height: 24px; padding: 4px 2px; }
 
@@ -708,7 +717,7 @@ export default function LandingPage() {
                 {/* Google Play badge */}
                 <a href="https://play.google.com/store/apps/details?id=com.skoconnect.skoconnect"
                    target="_blank" rel="noopener noreferrer"
-                   className="h-r3"
+                   className="h-r3 lp-play-badge"
                    style={{ display: 'inline-flex', alignItems: 'center', gap: 10, background: '#000', borderRadius: 12, padding: '8px 16px 8px 12px', textDecoration: 'none', marginBottom: 36, transition: 'transform 0.15s ease', border: '1px solid rgba(255,255,255,0.15)' }}
                    onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-1px)'}
                    onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}>
@@ -916,7 +925,7 @@ export default function LandingPage() {
                   <div style={{ fontSize: 52, marginBottom: 16 }}>{personas[activePersona].emoji}</div>
                   <h3 className="serif" style={{ fontSize: 26, color: '#1C1917', marginBottom: 8 }}>{personas[activePersona].role}</h3>
                   <p style={{ fontSize: 15, color: '#78716C', marginBottom: 32 }}>{personas[activePersona].tagline}</p>
-                  <a href="https://admin.skoconnect.com/login" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '11px 22px', borderRadius: 10, fontSize: 14, fontWeight: 600, color: '#fff', textDecoration: 'none', background: personas[activePersona].accent }}>
+                  <a href="https://admin.skoconnect.com/login" className="lp-signin-link" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '11px 22px', borderRadius: 10, fontSize: 14, fontWeight: 600, color: '#fff', textDecoration: 'none', background: personas[activePersona].accent }}>
                     Sign In →
                   </a>
                 </div>
@@ -1078,6 +1087,7 @@ export default function LandingPage() {
             <div style={{ marginBottom: 28 }}>
               <a href="https://play.google.com/store/apps/details?id=com.skoconnect.skoconnect"
                  target="_blank" rel="noopener noreferrer"
+                 className="lp-play-badge"
                  style={{ display: 'inline-flex', alignItems: 'center', gap: 10, background: '#000', borderRadius: 12, padding: '8px 16px 8px 12px', textDecoration: 'none', transition: 'transform 0.15s ease', border: '1px solid rgba(255,255,255,0.15)' }}
                  onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-1px)'}
                  onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}>
@@ -1095,7 +1105,7 @@ export default function LandingPage() {
             </div>
             <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: 13 }}>
               Questions?{' '}
-              <a href="mailto:support.skoconnect@agentmail.to" style={{ color: 'rgba(255,255,255,0.55)', textDecoration: 'underline' }}>
+              <a href="mailto:support.skoconnect@agentmail.to" className="lp-mailto" style={{ color: 'rgba(255,255,255,0.55)', textDecoration: 'underline' }}>
                 support.skoconnect@agentmail.to
               </a>
             </p>
@@ -1134,7 +1144,7 @@ export default function LandingPage() {
                     { label: 'Security', href: 'https://admin.skoconnect.com/security' },
                     { label: 'Pricing', href: 'mailto:info.skoconnect@agentmail.to?subject=Pricing%20Inquiry' },
                   ].map(l => (
-                    <li key={l.label}><a href={l.href} style={{ color: '#A8A29E', fontSize: 14, textDecoration: 'none', transition: 'color 0.2s' }}
+                    <li key={l.label}><a href={l.href} className="lp-footer-link" style={{ color: '#A8A29E', fontSize: 14, textDecoration: 'none', transition: 'color 0.2s' }}
                       onMouseEnter={e => (e.currentTarget.style.color = '#fff')}
                       onMouseLeave={e => (e.currentTarget.style.color = '#A8A29E')}
                     >{l.label}</a></li>
@@ -1153,7 +1163,7 @@ export default function LandingPage() {
                     { label: 'Privacy Policy', href: 'https://admin.skoconnect.com/privacy' },
                     { label: 'Terms', href: 'https://admin.skoconnect.com/terms' },
                   ].map(l => (
-                    <li key={l.label}><a href={l.href} style={{ color: '#A8A29E', fontSize: 14, textDecoration: 'none', transition: 'color 0.2s' }}
+                    <li key={l.label}><a href={l.href} className="lp-footer-link" style={{ color: '#A8A29E', fontSize: 14, textDecoration: 'none', transition: 'color 0.2s' }}
                       onMouseEnter={e => (e.currentTarget.style.color = '#fff')}
                       onMouseLeave={e => (e.currentTarget.style.color = '#A8A29E')}
                     >{l.label}</a></li>
@@ -1164,7 +1174,7 @@ export default function LandingPage() {
 
             <div style={{ borderTop: '1px solid #1C1917', paddingTop: 24, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
               <p style={{ color: '#A8A29E', fontSize: 13 }}>© 2026 SkoConnect. All rights reserved.</p>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', rowGap: 4 }}>
                 <span style={{ color: '#A8A29E', fontSize: 12 }}>Hosted on Google Cloud Firebase infrastructure</span>
                 <span style={{ color: '#A8A29E' }}>·</span>
                 <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#14B8A6' }}>
