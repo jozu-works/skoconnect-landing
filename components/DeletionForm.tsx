@@ -206,7 +206,7 @@ export default function DeletionForm({
         <p className="text-center text-body-sm text-ink-300 pt-2">
           Questions?{' '}
           <a
-            href="mailto:support.skoconnect@agentmail.to"
+            href="mailto:support@skoconnect.com"
             className="text-brand-600 hover:text-brand-700 underline underline-offset-2"
           >
             Contact support

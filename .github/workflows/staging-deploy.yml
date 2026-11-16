@@ -1,0 +1,85 @@
+name: Staging Deploy
+
+# Staging-first lane (2026-11-04, Dre-approved). Deploys the static export to
+# the `staging` Firebase Hosting CHANNEL on the existing project — a channel
+# deploy NEVER touches the production live site (it serves at
+# https://staging-<hash>-skoconnect.web.app and expires in 7 days, refreshable
+# on every push). Production deploys remain in deploy-landing.yml, gated to
+# pushes on main only.
+#
+# Mechanism note: firebase.json sets hosting target `skoconnect`; a channel
+# deploy against that target on the SAME project the prod SA already deploys
+# to (school-connect-enterprise) needs no new secrets or SA perms. The
+# `.firebaserc` `staging` project alias (school-connect-staging) is NOT used —
+# the GCP_SA_KEY secret is scoped to school-connect-enterprise.
+on:
+  push:
+    branches:
+      - develop
+    paths:
+      - 'app/**'
+      - 'components/**'
+      - 'public/**'
+      - 'package.json'
+      - 'firebase.json'
+      - '.github/workflows/staging-deploy.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: staging-deploy
+  cancel-in-progress: true  # channel deploys are atomic — safe to cancel
+
+jobs:
+  build-staging:
+    name: Build
+    runs-on: arc-runners-landing
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - run: npm ci
+
+      - name: Build
+        run: npm run build
+        env:
+          NEXT_PUBLIC_GA4_ID: ${{ secrets.NEXT_PUBLIC_GA4_ID }}
+
+  deploy-staging:
+    name: Deploy to Firebase Hosting staging channel
+    needs: build-staging
+    if: github.ref == 'refs/heads/develop' && github.event_name != 'pull_request'
+    runs-on: arc-runners-landing
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - run: npm ci
+
+      - name: Build
+        run: npm run build
+        env:
+          NEXT_PUBLIC_GA4_ID: ${{ secrets.NEXT_PUBLIC_GA4_ID }}
+
+      - name: Write GCP service account key
+        run: echo '${{ secrets.GCP_SA_KEY }}' > /tmp/gcp-sa-key.json
+
+      - name: Deploy to staging channel (never prod)
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: /tmp/gcp-sa-key.json
+        run: npx firebase-tools hosting:channel:deploy staging --project school-connect-enterprise --expires 30d --non-interactive
+
+      - name: Cleanup credentials
+        if: always()
+        run: rm -f /tmp/gcp-sa-key.json
+        # firebase-tools prints the staging channel URL on deploy success;
+        # it appears as https://staging-<site-hash>-skoconnect.web.app

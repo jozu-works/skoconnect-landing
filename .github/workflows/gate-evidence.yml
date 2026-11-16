@@ -1,0 +1,19 @@
+name: Gate evidence checklist
+on:
+  pull_request:
+    types: [opened]
+permissions:
+  pull-requests: write
+jobs:
+  gate-checklist:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: "## 🚦 Gate checklist (auto-posted)\nBefore this PR merges, one of these must hold:\n- **Atlas gate review** — an Atlas comment containing `gate: approved`\n- **Founder sanction** — merged by @itmanjm (sanctioned by definition)\n- **Promotion PR** — base branch is `main`\n\nAfter merging, the gate watchdog stamps the verdict on this PR so the audit trail lives in Git. Agent workers must never merge their own PRs."
+            })

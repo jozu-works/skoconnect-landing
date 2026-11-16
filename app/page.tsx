@@ -166,7 +166,7 @@ const steps = [
 
 const FUNCTIONS_URL = 'https://us-central1-school-connect-enterprise.cloudfunctions.net/requestAccess';
 
-function RequestAccessModal({ onClose }: { onClose: () => void }) {
+function RequestAccessModal({ onClose, variant = 'pilot' }: { onClose: () => void; variant?: 'pilot' | 'demo' }) {
   const [form, setForm] = useState({ school_name: '', contact_name: '', contact_email: '', phone: '', message: '' });
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
@@ -232,8 +232,14 @@ function RequestAccessModal({ onClose }: { onClose: () => void }) {
           </div>
         ) : (
           <>
-            <h3 style={{ fontFamily: "'DM Serif Display', Georgia, serif", fontSize: 24, color: '#fff', marginBottom: 6 }}>Start Your School's Pilot</h3>
-            <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 14, marginBottom: 28 }}>Free during the pilot program — SkoConnect is live in production today. We'll be in touch within 24 hours.</p>
+            <h3 style={{ fontFamily: "'DM Serif Display', Georgia, serif", fontSize: 24, color: '#fff', marginBottom: 6 }}>
+              {variant === 'demo' ? 'Talk to the Founder — 15 min' : "Start Your School's Pilot"}
+            </h3>
+            {variant === 'demo' ? (
+              <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 14, marginBottom: 28 }}>A 15-minute call to understand your school, answer implementation questions, and see whether the pilot is a fit. We’ll reply within one business day.</p>
+            ) : (
+              <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 14, marginBottom: 28 }}>Free during the pilot program — SkoConnect is live in production today. We'll be in touch within 24 hours.</p>
+            )}
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div>
                 <label style={labelStyle}>School Name *</label>
@@ -259,7 +265,7 @@ function RequestAccessModal({ onClose }: { onClose: () => void }) {
                 <p style={{ color: '#FCA5A5', fontSize: 13, padding: '10px 14px', background: 'rgba(220,38,38,0.15)', borderRadius: 8, border: '1px solid rgba(220,38,38,0.3)' }}>{errorMsg}</p>
               )}
               <button type="submit" disabled={status === 'submitting'} style={{ background: status === 'submitting' ? 'rgba(13,148,136,0.5)' : '#0D9488', color: '#fff', border: 'none', borderRadius: 10, padding: '13px 0', fontSize: 15, fontWeight: 700, cursor: status === 'submitting' ? 'not-allowed' : 'pointer', marginTop: 4 }}>
-                {status === 'submitting' ? 'Submitting…' : 'Request Access →'}
+                {status === 'submitting' ? 'Submitting…' : 'Start Your Free Pilot →'}
               </button>
               <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.3)', textAlign: 'center' }}>No credit card required. The pilot program is free.</p>
             </form>
@@ -274,7 +280,7 @@ export default function LandingPage() {
   const [scrolled, setScrolled] = useState(false);
   const [activePersona, setActivePersona] = useState(0);
   const [visibleSections, setVisibleSections] = useState<Set<string>>(new Set());
-  const [showModal, setShowModal] = useState(false);
+  const [showModal, setShowModal] = useState<false | 'pilot' | 'demo'>(false);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 40);
@@ -298,10 +304,11 @@ export default function LandingPage() {
   }, []);
 
   const vis = (id: string) => visibleSections.has(id);
+  const scrollToHowItWorks = () => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' });
 
   return (
     <>
-      {showModal && <RequestAccessModal onClose={() => setShowModal(false)} />}
+      {showModal && <RequestAccessModal variant={showModal} onClose={() => setShowModal(false)} />}
       <style>{`
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -664,8 +671,8 @@ export default function LandingPage() {
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
               <a href="https://admin.skoconnect.com/login" style={{ color: 'rgba(255,255,255,0.6)', fontSize: 14, fontWeight: 500, textDecoration: 'none' }}
                 className="hidden sm:block">Sign In</a>
-              <button onClick={() => setShowModal(true)} className="btn-teal" style={{ padding: '10px 20px', borderRadius: 10, fontSize: 14, fontWeight: 600, color: '#fff', background: '#0D9488', border: 'none', cursor: 'pointer', display: 'inline-block' }}>
-                <span>Request Access →</span>
+              <button onClick={() => setShowModal('pilot')} className="btn-teal" style={{ padding: '10px 20px', borderRadius: 10, fontSize: 14, fontWeight: 600, color: '#fff', background: '#0D9488', border: 'none', cursor: 'pointer', display: 'inline-block' }}>
+                <span>Start Your Free Pilot →</span>
               </button>
             </div>
           </div>
@@ -706,12 +713,12 @@ export default function LandingPage() {
 
                 {/* CTAs */}
                 <div className="h-r3" style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginBottom: 20 }}>
-                  <button onClick={() => setShowModal(true)} className="btn-teal" style={{ padding: '14px 28px', borderRadius: 12, fontSize: 16, fontWeight: 600, color: '#fff', background: '#0D9488', border: 'none', cursor: 'pointer', display: 'inline-block' }}>
+                  <button onClick={() => setShowModal('pilot')} className="btn-teal" style={{ padding: '14px 28px', borderRadius: 12, fontSize: 16, fontWeight: 600, color: '#fff', background: '#0D9488', border: 'none', cursor: 'pointer', display: 'inline-block' }}>
                     <span>Start Your Free Pilot →</span>
                   </button>
-                  <a href="https://admin.skoconnect.com/login" className="btn-ghost-white" style={{ padding: '14px 28px', borderRadius: 12, fontSize: 16, fontWeight: 600, color: '#fff', textDecoration: 'none', display: 'inline-block' }}>
-                    Sign In →
-                  </a>
+                  <button onClick={scrollToHowItWorks} className="btn-ghost-white" style={{ padding: '14px 28px', borderRadius: 12, fontSize: 16, fontWeight: 600, color: '#fff', background: 'transparent', cursor: 'pointer' }}>
+                    See How It Works
+                  </button>
                 </div>
 
                 {/* Google Play badge */}
@@ -925,9 +932,15 @@ export default function LandingPage() {
                   <div style={{ fontSize: 52, marginBottom: 16 }}>{personas[activePersona].emoji}</div>
                   <h3 className="serif" style={{ fontSize: 26, color: '#1C1917', marginBottom: 8 }}>{personas[activePersona].role}</h3>
                   <p style={{ fontSize: 15, color: '#78716C', marginBottom: 32 }}>{personas[activePersona].tagline}</p>
-                  <a href="https://admin.skoconnect.com/login" className="lp-signin-link" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '11px 22px', borderRadius: 10, fontSize: 14, fontWeight: 600, color: '#fff', textDecoration: 'none', background: personas[activePersona].accent }}>
-                    Sign In →
-                  </a>
+                  {activePersona === 0 ? (
+                    <button onClick={() => setShowModal('pilot')} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '11px 22px', borderRadius: 10, fontSize: 14, fontWeight: 600, color: '#fff', background: personas[activePersona].accent, border: 'none', cursor: 'pointer' }}>
+                      Start Your Free Pilot →
+                    </button>
+                  ) : (
+                    <a href="https://admin.skoconnect.com/login" className="lp-signin-link" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '11px 22px', borderRadius: 10, fontSize: 14, fontWeight: 600, color: '#fff', textDecoration: 'none', background: personas[activePersona].accent }}>
+                      Sign In →
+                    </a>
+                  )}
                 </div>
                 <div style={{ padding: '44px 40px', background: `${personas[activePersona].bg}` }}>
                   <h4 style={{ fontSize: 11, fontWeight: 700, color: '#A8A29E', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 24 }}>Key Benefits</h4>
@@ -986,8 +999,8 @@ export default function LandingPage() {
             </div>
 
             <div style={{ textAlign: 'center', marginTop: 56 }}>
-              <button onClick={() => setShowModal(true)} className="btn-teal" style={{ display: 'inline-block', padding: '15px 32px', borderRadius: 12, fontSize: 16, fontWeight: 600, color: '#fff', background: '#0D9488', border: 'none', cursor: 'pointer' }}>
-                <span>Request Access →</span>
+              <button onClick={() => setShowModal('pilot')} className="btn-teal" style={{ display: 'inline-block', padding: '15px 32px', borderRadius: 12, fontSize: 16, fontWeight: 600, color: '#fff', background: '#0D9488', border: 'none', cursor: 'pointer' }}>
+                <span>Start Your Free Pilot →</span>
               </button>
             </div>
           </div>
@@ -1077,11 +1090,11 @@ export default function LandingPage() {
               SkoConnect is live in production and on Google Play. The Free Pilot Program is available at no cost to participating schools during the pilot period. Pricing for full rollout will be shared before the pilot ends. No credit card required, and no school will be charged automatically. The mobile app is free to download, but access is activated through a school's subscription or pilot enrollment — families do not pay separately for the app.
             </p>
             <div className="final-cta-buttons" style={{ display: 'flex', flexWrap: 'wrap', gap: 14, justifyContent: 'center', marginBottom: 20 }}>
-              <button onClick={() => setShowModal(true)} className="btn-teal" style={{ display: 'inline-block', padding: '15px 32px', borderRadius: 12, fontSize: 16, fontWeight: 600, color: '#fff', background: '#0D9488', border: 'none', cursor: 'pointer', boxShadow: '0 4px 32px rgba(20,184,166,0.4)' }}>
+              <button onClick={() => setShowModal('pilot')} className="btn-teal" style={{ display: 'inline-block', padding: '15px 32px', borderRadius: 12, fontSize: 16, fontWeight: 600, color: '#fff', background: '#0D9488', border: 'none', cursor: 'pointer', boxShadow: '0 4px 32px rgba(20,184,166,0.4)' }}>
                 <span>Start Your Free Pilot →</span>
               </button>
-              <button onClick={() => setShowModal(true)} className="btn-ghost-white" style={{ display: 'inline-block', padding: '15px 32px', borderRadius: 12, fontSize: 16, fontWeight: 600, color: '#fff', background: 'transparent', border: '1px solid rgba(255,255,255,0.3)', cursor: 'pointer' }}>
-                Request a Demo
+              <button onClick={() => setShowModal('demo')} className="btn-ghost-white" style={{ display: 'inline-block', padding: '15px 32px', borderRadius: 12, fontSize: 16, fontWeight: 600, color: '#fff', background: 'transparent', border: '1px solid rgba(255,255,255,0.3)', cursor: 'pointer' }}>
+                Talk to the Founder — 15 min
               </button>
             </div>
             <div style={{ marginBottom: 28 }}>
@@ -1105,8 +1118,8 @@ export default function LandingPage() {
             </div>
             <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: 13 }}>
               Questions?{' '}
-              <a href="mailto:support.skoconnect@agentmail.to" className="lp-mailto" style={{ color: 'rgba(255,255,255,0.55)', textDecoration: 'underline' }}>
-                support.skoconnect@agentmail.to
+              <a href="mailto:support@skoconnect.com" style={{ color: 'rgba(255,255,255,0.55)', textDecoration: 'underline' }}>
+                support@skoconnect.com
               </a>
             </p>
           </div>
@@ -1142,12 +1155,13 @@ export default function LandingPage() {
                     { label: 'For Schools', href: '#for-schools' },
                     { label: 'Download App', href: 'https://play.google.com/store/apps/details?id=com.skoconnect.skoconnect' },
                     { label: 'Security', href: 'https://admin.skoconnect.com/security' },
-                    { label: 'Pricing', href: 'mailto:info.skoconnect@agentmail.to?subject=Pricing%20Inquiry' },
+                    { label: 'Pricing & pilot details', href: 'mailto:info@skoconnect.com?subject=Pricing%20Inquiry', note: 'Pilot participation is free for participating schools. We’ll share full-rollout pricing before the pilot ends; no school is charged automatically.' },
                   ].map(l => (
                     <li key={l.label}><a href={l.href} className="lp-footer-link" style={{ color: '#A8A29E', fontSize: 14, textDecoration: 'none', transition: 'color 0.2s' }}
                       onMouseEnter={e => (e.currentTarget.style.color = '#fff')}
                       onMouseLeave={e => (e.currentTarget.style.color = '#A8A29E')}
-                    >{l.label}</a></li>
+                    >{l.label}</a>
+                    {l.note && <p style={{ color: '#78716C', fontSize: 12, lineHeight: 1.5, margin: '2px 0 0', maxWidth: 260 }}>{l.note}</p>}</li>
                   ))}
                 </ul>
               </div>
@@ -1158,8 +1172,8 @@ export default function LandingPage() {
                 <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 12 }}>
                   {[
                     { label: 'About', href: 'https://admin.skoconnect.com/about' },
-                    { label: 'Blog', href: 'mailto:info.skoconnect@agentmail.to?subject=Blog%20Inquiry' },
-                    { label: 'Contact', href: 'mailto:support.skoconnect@agentmail.to' },
+                    { label: 'Blog', href: 'mailto:info@skoconnect.com?subject=Blog%20Inquiry' },
+                    { label: 'Contact', href: 'mailto:support@skoconnect.com' },
                     { label: 'Privacy Policy', href: 'https://admin.skoconnect.com/privacy' },
                     { label: 'Terms', href: 'https://admin.skoconnect.com/terms' },
                   ].map(l => (

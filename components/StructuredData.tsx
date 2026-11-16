@@ -46,7 +46,7 @@ export default function StructuredData() {
             },
             contactPoint: {
               '@type': 'ContactPoint',
-              email: 'support.skoconnect@agentmail.to',
+              email: 'support@skoconnect.com',
               contactType: 'customer service',
             },
           }),
