@@ -36,7 +36,7 @@ def git(*args):
 def review(diff, path):
     """Review one bounded diff chunk; failure raises and blocks merge."""
     payload = {
-        "model": "gpt-6-sol",
+        "model": "gpt-6-luna",
         "temperature": 0,
         "max_tokens": 4000,
         "messages": [
