@@ -36,7 +36,7 @@ def git(*args):
 def review(diff, path):
     """Review one bounded diff chunk; failure raises and blocks merge."""
     payload = {
-        "model": "gpt-6-sol",
+        "model": "gpt-6-luna",  # bridge lane Nov 19: deployed endpoint rejects gpt-6-sol (400 "Unsupported model or streaming"); luna probe-verified live (200 PONG)
         "temperature": 0,
         "max_tokens": 4000,
         "messages": [
