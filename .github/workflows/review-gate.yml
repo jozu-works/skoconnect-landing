@@ -31,9 +31,25 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }} # data only; never execute PR code
           fetch-depth: 0
           persist-credentials: false
+      - name: Resolve live base head
+        id: base
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # github.event.pull_request.base.sha is frozen at PR-creation time and
+          # never follows base-branch movement, so a stale snapshot can pin an
+          # outdated reviewer forever. Always use the live base head.
+          # persist-credentials:false means the checkout remote has no auth —
+          # inject the job token into this one fetch only (never persisted).
+          CRED=$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 | tr -d '\n')
+          git -c "http.https://github.com/.extraheader=AUTHORIZATION: basic ${CRED}" \
+            fetch --no-tags origin "refs/heads/${BASE_REF}"
+          unset CRED
+          echo "sha=$(git rev-parse "FETCH_HEAD")" >> "$GITHUB_OUTPUT"
       - name: Load reviewer from trusted base commit
         env:
-          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          BASE_SHA: ${{ steps.base.outputs.sha }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
@@ -82,7 +98,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           GITHUB_REPOSITORY: ${{ github.repository }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
-          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          BASE_SHA: ${{ steps.base.outputs.sha }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           GITHUB_RUN_ID: ${{ github.run_id }}
         run: python3 "$RUNNER_TEMP/review_gate.py" "$BASE_SHA" "$HEAD_SHA"
