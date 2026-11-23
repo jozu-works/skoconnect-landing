@@ -53,4 +53,22 @@ jobs:
           grep -q "X-Frame-Options" firebase.json || { echo "::error::firebase.json lost X-Frame-Options header"; exit 1; }
           echo "Smoke OK: index + 404 exported, headers declared"
 
+  test:
+    name: Jest unit tests
+    runs-on: arc-runners-landing
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - run: npm ci
+
+      # Test-architecture wave: run jest (__tests__/) on every PR.
+      - name: Test
+        run: npm test -- --ci
+
 
