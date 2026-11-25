@@ -18,12 +18,6 @@ export default function StructuredData() {
               priceValidUntil: '2026-12-31',
               availability: 'https://schema.org/InStock',
             },
-            aggregateRating: {
-              '@type': 'AggregateRating',
-              ratingValue: '4.9',
-              ratingCount: '500',
-              bestRating: '5',
-            },
             description: 'School communication platform for Jamaican schools with real-time announcements, emergency alerts, digital forms, and mobile apps.',
             url: 'https://skoconnect.com',
           }),
