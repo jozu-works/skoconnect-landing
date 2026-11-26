@@ -290,8 +290,13 @@ export default function LandingPage() {
 
   // Deep link support: /?pilot=1 opens the pilot request modal (used by the
   // /enroll "Start the free pilot" CTA — same path as the landing's pilot CTA).
+  // The param is stripped after opening (history.replaceState) so a reload or
+  // shared URL doesn't force the modal open again on every load.
   useEffect(() => {
-    if (new URLSearchParams(window.location.search).has('pilot')) setShowModal('pilot');
+    if (new URLSearchParams(window.location.search).has('pilot')) {
+      setShowModal('pilot');
+      window.history.replaceState({}, '', window.location.pathname);
+    }
   }, []);
 
   useEffect(() => {

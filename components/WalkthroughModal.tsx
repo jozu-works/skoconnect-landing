@@ -8,7 +8,7 @@
  * support@skoconnect.com (companion change — see PR body).
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const FUNCTIONS_URL =
   'https://us-central1-school-connect-enterprise.cloudfunctions.net/requestAccess';
@@ -36,12 +36,54 @@ export default function WalkthroughModal({ onClose }: { onClose: () => void }) {
   });
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
+  const panelRef = useRef<HTMLDivElement>(null);
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
 
+  // A11y: move focus into the dialog on open, trap Tab within the panel,
+  // restore focus to the trigger on close. Escape is the keyboard path that
+  // closes the dialog (the overlay click-to-close is pointer-only convenience;
+  // the panel itself carries role="dialog" + aria-modal for screen readers).
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+
+    const focusableInPanel = () =>
+      Array.from(
+        panelRef.current?.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        ) ?? [],
+      );
+
+    focusableInPanel()[0]?.focus();
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onCloseRef.current();
+        return;
+      }
+      if (e.key !== 'Tab') return;
+      const focusables = focusableInPanel();
+      if (focusables.length === 0) return;
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      const active = document.activeElement;
+      if (e.shiftKey) {
+        if (active === first || !panelRef.current?.contains(active as Node)) {
+          e.preventDefault();
+          last.focus();
+        }
+      } else if (active === last || !panelRef.current?.contains(active as Node)) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+
     window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [onClose]);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      previouslyFocused?.focus();
+    };
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,7 +109,13 @@ export default function WalkthroughModal({ onClose }: { onClose: () => void }) {
       setStatus('success');
     } catch (err) {
       setStatus('error');
-      setErrorMsg(err instanceof Error ? err.message : 'Network error. Please check your connection and try again.');
+      setErrorMsg(
+        err instanceof TypeError
+          ? 'Network error. Please check your connection and try again.'
+          : err instanceof Error
+            ? err.message
+            : 'Something went wrong. Please try again.',
+      );
     }
   };
 
@@ -88,7 +136,10 @@ export default function WalkthroughModal({ onClose }: { onClose: () => void }) {
       style={{ position: 'fixed', inset: 0, background: 'rgba(4,47,46,0.85)', backdropFilter: 'blur(8px)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}
     >
       <div
-        role="presentation"
+        ref={panelRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="wk-title"
         onClick={e => e.stopPropagation()}
         style={{ background: 'linear-gradient(135deg, #042F2E 0%, #0a4a44 100%)', borderRadius: 20, padding: '32px 24px', maxWidth: 480, width: '100%', maxHeight: '90vh', overflowY: 'auto', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 32px 80px rgba(0,0,0,0.5)', position: 'relative' }}
       >
@@ -105,7 +156,7 @@ export default function WalkthroughModal({ onClose }: { onClose: () => void }) {
           </div>
         ) : (
           <>
-            <h3 style={{ fontSize: 24, color: '#fff', marginBottom: 6, fontWeight: 700 }}>Book a walkthrough</h3>
+            <h3 id="wk-title" style={{ fontSize: 24, color: '#fff', marginBottom: 6, fontWeight: 700 }}>Book a walkthrough</h3>
             <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 14, marginBottom: 28 }}>
               A founder-led walkthrough of SkoEnroll on your school&apos;s forms. We&apos;ll reply within one business day.
             </p>

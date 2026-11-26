@@ -12,7 +12,7 @@ import EnrollPageClient from '@/components/EnrollPageClient';
 export const metadata: Metadata = {
   title: 'SkoEnroll — Digital Student Enrolment for Jamaican Schools | SkoConnect',
   description:
-    'Replace paper enrolment with branded online forms, verified parent emails, seat approvals and real-time application tracking. Live in Jamaica — free pilot available.',
+    'Replace paper enrolment with branded online forms, verified parent emails, seat approvals and real-time application tracking. Built for Jamaican schools — first pilot school confirmed, free pilot available.',
   keywords:
     'online student enrolment system Jamaica, school registration software Jamaica, digital enrolment forms school, SkoEnroll, SkoConnect',
   alternates: {
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     url: 'https://skoconnect.com/enroll',
     title: 'SkoEnroll — Digital Student Enrolment for Jamaican Schools | SkoConnect',
     description:
-      'Replace paper enrolment with branded online forms, verified parent emails, seat approvals and real-time application tracking. Live in Jamaica — free pilot available.',
+      'Replace paper enrolment with branded online forms, verified parent emails, seat approvals and real-time application tracking. Built for Jamaican schools — first pilot school confirmed, free pilot available.',
     siteName: 'SkoConnect',
     images: [{ url: '/og-enroll.png', width: 1200, height: 630, alt: 'SkoEnroll — digital student enrolment by SkoConnect' }],
   },
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'SkoEnroll — Digital Student Enrolment for Jamaican Schools | SkoConnect',
     description:
-      'Replace paper enrolment with branded online forms, verified parent emails, seat approvals and real-time application tracking. Live in Jamaica — free pilot available.',
+      'Replace paper enrolment with branded online forms, verified parent emails, seat approvals and real-time application tracking. Built for Jamaican schools — first pilot school confirmed, free pilot available.',
     images: ['/og-enroll.png'],
   },
   robots: {
@@ -105,6 +105,10 @@ const faqSchema = {
 export default function EnrollPage() {
   return (
     <>
+      {/* Inter — SkoEnroll page font, scoped here (was global in layout.tsx) */}
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareApplicationSchema) }}

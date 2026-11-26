@@ -107,7 +107,7 @@ export default function EnrollMarketing() {
               Stop printing enrolment forms. Start approving them from your phone.
             </h1>
             <p style={{ color: 'rgba(255,255,255,0.72)', fontSize: 18, lineHeight: 1.6, maxWidth: 640, margin: '0 auto 40px' }}>
-              SkoEnroll moves your school&apos;s student enrolment fully online — branded application forms, verified parent emails, and real-time tracking from first submission to final approval. Live in production with schools in Jamaica.
+              SkoEnroll moves your school&apos;s student enrolment fully online — branded application forms, verified parent emails, and real-time tracking from first submission to final approval. Built for Jamaican schools — first pilot school confirmed, founding cohort now open.
             </p>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, justifyContent: 'center', marginBottom: 24 }}>
               {ctaPrimary}
@@ -203,14 +203,14 @@ export default function EnrollMarketing() {
             </p>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 20 }}>
               {[
-                { icon: '🗂️', label: 'Admin application queue' },
-                { icon: '🪑', label: 'Seat approval panel' },
-                { icon: '🏫', label: 'Superadmin intake dashboard' },
+                { icon: '🗂️', label: 'Admin application queue', body: 'Every incoming application lands in one queue — sort, filter and review without shuffling paper.' },
+                { icon: '🪑', label: 'Seat approval panel', body: 'Approve or decline seats against your intake limits, with one-click decision emails.' },
+                { icon: '🏫', label: 'Superadmin intake dashboard', body: 'Oversee multiple intakes and staff approval limits from a single view.' },
               ].map(s => (
                 <div key={s.label} style={{ border: `2px dashed #CCFBF1`, borderRadius: 14, padding: '32px 20px', background: '#F0FDFA' }}>
                   <div style={{ fontSize: 34, marginBottom: 12 }} aria-hidden="true">{s.icon}</div>
                   <p style={{ fontSize: 13, fontWeight: 600, color: '#0F766E' }}>{s.label}</p>
-                  <p style={{ fontSize: 12, color: '#78716C', marginTop: 6 }}>Screenshot slot — captured from production at review</p>
+                  <p style={{ fontSize: 12, color: '#78716C', marginTop: 6 }}>{s.body}</p>
                 </div>
               ))}
             </div>
@@ -222,14 +222,14 @@ export default function EnrollMarketing() {
           <div style={{ position: 'absolute', top: '-40%', right: '-5%', width: 320, height: 320, borderRadius: '50%', background: 'rgba(255,179,0,0.1)', filter: 'blur(6px)' }} aria-hidden="true" />
           <div style={{ maxWidth: 760, margin: '0 auto', textAlign: 'center', position: 'relative' }}>
             <h2 style={{ fontSize: 'clamp(1.6rem,2.8vw,2.2rem)', color: '#fff', letterSpacing: '-0.02em', marginBottom: 24, fontWeight: 800 }}>
-              Running in production today.
+              Pilot rollout underway.
             </h2>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: 12, background: 'rgba(255,255,255,0.08)', border: `1px solid ${BLUE}`, borderRadius: 100, padding: '14px 28px', marginBottom: 32 }}>
               <span style={{ width: 10, height: 10, borderRadius: '50%', background: GOLD, display: 'inline-block' }} aria-hidden="true" />
               <span style={{ color: '#fff', fontSize: 15, fontWeight: 600 }}>First pilot school confirmed — case study coming</span>
             </div>
             <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: 14, lineHeight: 1.7 }}>
-              Placeholder stats — filled after the first term of data: Applications processed · Average time-to-decision · Hours saved per intake
+              Application volumes, average time-to-decision and hours saved per intake will be published with the first pilot school&apos;s case study.
             </p>
           </div>
         </section>
