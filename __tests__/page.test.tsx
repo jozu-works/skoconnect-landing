@@ -160,4 +160,11 @@ describe('LandingPage — RequestAccessModal', () => {
     expect(screen.queryByText(/network error/i)).not.toBeInTheDocument();
     expect(screen.getByText("Start Your School's Pilot")).toBeInTheDocument();
   });
+
+  it('opens demo variant modal and shows demo copy', async () => {
+    render(<LandingPage />);
+    fireEvent.click(screen.getByRole('button', { name: /talk to the founder/i }));
+    expect(await screen.findByRole('heading', { name: /talk to the founder — 15 min/i })).toBeInTheDocument();
+    expect(screen.getByText(/15-minute call to understand your school/i)).toBeInTheDocument();
+  });
 });
