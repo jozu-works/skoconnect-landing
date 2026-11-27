@@ -240,42 +240,6 @@ class ExitCodeAlignedVerdictTest(unittest.TestCase):
         self.assertIn("verdict: PATCHed job check-run 888", log.getvalue())
 
 
-class BinaryAssetSkipTest(unittest.TestCase):
-    """Binary assets (og images, fonts) have no reviewer-readable diff; before
-    the extension skip they errored the run ('Review incomplete — fail
-    closed'). They must be skipped so the reviewer completes over text files."""
-
-    def setUp(self):
-        self.gate = load_gate()
-        self.gate.comment = mock.Mock()
-        self.gate.create_check = mock.Mock()
-        self.reviewed = []
-
-        def fake_review(chunk, path):
-            self.reviewed.append(path)
-            return []
-
-        self.gate.review = fake_review
-
-    @staticmethod
-    def _git(*args):
-        if args[0] == "merge-base":
-            return "base0000"
-        if args[1] == "--name-only":
-            return "public/og-enroll.png\0public/fonts/x.woff2\0components/X.tsx"
-        return "diff --git a/f b/f\n+code"
-
-    def test_binary_extensions_skipped_and_run_completes(self):
-        log = io.StringIO()
-        with contextlib.redirect_stdout(log):
-            result = self.gate.run("base0000", "head1111", "jozu-works/x", 1, "tok", "9")
-        self.assertTrue(result)  # no 'Review incomplete' errors
-        self.assertEqual(self.reviewed, ["components/X.tsx"])
-        self.assertIn("skipped public/og-enroll.png", log.getvalue())
-        self.assertIn("skipped public/fonts/x.woff2", log.getvalue())
-        self.assertNotIn("Review incomplete", log.getvalue())
-
-
 class _FakeHeaders(dict):
     """Case-insensitive header mapping, like email.message.Message."""
 

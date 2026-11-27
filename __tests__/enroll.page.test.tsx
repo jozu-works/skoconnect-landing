@@ -16,7 +16,7 @@ describe('/enroll page metadata', () => {
   it('keeps the canonical URL and OG/Twitter metadata', () => {
     expect(metadata.alternates?.canonical).toBe('/enroll');
     expect(metadata.title).toMatch(/SkoEnroll/i);
-    expect(md.openGraph.images[0].url).toBe('/og-enroll.png');
+    expect(md.openGraph.images[0].url).toBe('/og-image.png');
     expect(md.twitter.card).toBe('summary_large_image');
   });
 

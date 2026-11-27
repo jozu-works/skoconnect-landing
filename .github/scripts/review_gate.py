@@ -27,15 +27,6 @@ import urllib.request
 BRIDGE = "http://100.89.200.72:8767/v1/chat/completions"
 API = "https://api.github.com"
 SEVERITIES = {"critical", "high", "medium", "low", "info"}
-# Binary assets cannot be meaningfully reviewed as text diffs and their diffs
-# render as 'Binary files ... differ' (or empty), which would otherwise fail
-# the run closed. Skip them by extension so the reviewer completes over the
-# text changes; build artifacts (out/, *.min.*) are still reviewed if text.
-BINARY_EXTENSIONS = {
-    ".png", ".jpg", ".jpeg", ".gif", ".webp", ".ico", ".avif", ".bmp",
-    ".woff", ".woff2", ".ttf", ".otf", ".eot", ".mp4", ".webm", ".mp3",
-    ".pdf", ".zip", ".gz",
-}
 
 
 def git(*args):
@@ -297,10 +288,6 @@ def run(base, head, repo, pr, token, run_id):
         if not paths:
             raise ValueError("empty diff — reviewer did not inspect changes")
         for path in paths:
-            ext = os.path.splitext(path)[1].lower()
-            if ext in BINARY_EXTENSIONS:
-                print(f"skipped {path}: binary asset ({ext}) — not reviewer-readable")
-                continue
             try:
                 diff = git("diff", "--no-ext-diff", "--unified=8", merge_base,
                            head, "--", path)

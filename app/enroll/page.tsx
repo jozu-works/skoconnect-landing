@@ -26,14 +26,14 @@ export const metadata: Metadata = {
     description:
       'Replace paper enrolment with branded online forms, verified parent emails, seat approvals and real-time application tracking. Built for Jamaican schools — first pilot school confirmed, free pilot available.',
     siteName: 'SkoConnect',
-    images: [{ url: '/og-enroll.png', width: 1200, height: 630, alt: 'SkoEnroll — digital student enrolment by SkoConnect' }],
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'SkoEnroll — digital student enrolment by SkoConnect' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'SkoEnroll — Digital Student Enrolment for Jamaican Schools | SkoConnect',
     description:
       'Replace paper enrolment with branded online forms, verified parent emails, seat approvals and real-time application tracking. Built for Jamaican schools — first pilot school confirmed, free pilot available.',
-    images: ['/og-enroll.png'],
+    images: ['/og-image.png'],
   },
   robots: {
     index: true,
@@ -76,7 +76,7 @@ const softwareApplicationSchema = {
   description:
     'Digital student enrolment for Jamaican schools — branded online application forms, verified parent emails, seat approvals and real-time application tracking.',
   url: 'https://skoconnect.com/enroll',
-  image: 'https://skoconnect.com/og-enroll.png',
+  image: 'https://skoconnect.com/og-image.png',
   publisher: {
     '@type': 'Organization',
     name: 'SkoConnect',
