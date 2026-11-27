@@ -288,6 +288,17 @@ export default function LandingPage() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Deep link support: /?pilot=1 opens the pilot request modal (used by the
+  // /enroll "Start the free pilot" CTA — same path as the landing's pilot CTA).
+  // The param is stripped after opening (history.replaceState) so a reload or
+  // shared URL doesn't force the modal open again on every load.
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).has('pilot')) {
+      setShowModal('pilot');
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  }, []);
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -1006,6 +1017,25 @@ export default function LandingPage() {
           </div>
         </section>
 
+        {/* ────────────────────── ALSO FROM SKOCONNECT (SkoEnroll teaser) ── */}
+        <section id="enrolment" data-animate className={`s-hide ${vis('enrolment') ? 's-show' : ''}`}
+          style={{ padding: '72px 24px', background: '#042F2E', borderTop: '2px solid #FFB300' }}>
+          <div style={{ maxWidth: 860, margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '7px 16px', borderRadius: 100, background: '#062A5E', border: '1px solid #0055BF', marginBottom: 20 }}>
+              <span style={{ color: '#FFB300', fontSize: 13, fontWeight: 700, letterSpacing: '0.03em' }}>SkoEnroll · A SkoConnect product</span>
+            </div>
+            <h2 className="serif" style={{ fontSize: 'clamp(1.8rem,3.2vw,2.6rem)', lineHeight: 1.18, letterSpacing: '-0.02em', color: '#fff', marginBottom: 16 }}>
+              Also from SkoConnect: enrolment without the paper.
+            </h2>
+            <p style={{ color: 'rgba(255,255,255,0.65)', fontSize: 16, lineHeight: 1.65, maxWidth: 620, margin: '0 auto 32px' }}>
+              SkoEnroll moves student applications online — branded forms, verified parent emails, seat approvals, and automatic decision emails. Now live in production.
+            </p>
+            <a href="/enroll" className="btn-ghost-white" style={{ display: 'inline-block', padding: '15px 32px', borderRadius: 12, fontSize: 16, fontWeight: 600, color: '#fff', background: 'transparent', border: '1px solid rgba(255,255,255,0.3)', cursor: 'pointer', textDecoration: 'none' }}>
+              See how SkoEnroll works →
+            </a>
+          </div>
+        </section>
+
         {/* ────────────────────── FROM THE FOUNDER ───────────────────── */}
         <section id="founder-vision" data-animate className={`s-hide ${vis('founder-vision') ? 's-show' : ''}`}
           style={{ padding: '96px 24px', background: '#fff' }}>
@@ -1153,6 +1183,7 @@ export default function LandingPage() {
                   {[
                     { label: 'Features', href: '#features' },
                     { label: 'For Schools', href: '#for-schools' },
+                    { label: 'SkoEnroll — Digital Enrolment', href: '/enroll' },
                     { label: 'Download App', href: 'https://play.google.com/store/apps/details?id=com.skoconnect.skoconnect' },
                     { label: 'Security', href: 'https://admin.skoconnect.com/security' },
                     { label: 'Pricing & pilot details', href: 'mailto:info@skoconnect.com?subject=Pricing%20Inquiry', note: 'Pilot participation is free for participating schools. We’ll share full-rollout pricing before the pilot ends; no school is charged automatically.' },

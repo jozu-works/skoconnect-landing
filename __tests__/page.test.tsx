@@ -32,6 +32,23 @@ describe('LandingPage — RequestAccessModal', () => {
     ).toBeInTheDocument();
   });
 
+  it('auto-opens the pilot modal on /?pilot=1 (deep-link support)', () => {
+    window.history.pushState({}, '', '/?pilot=1');
+    render(<LandingPage />);
+
+    expect(screen.getByText("Start Your School's Pilot")).toBeInTheDocument();
+    expect(getModalForm()).toBeInTheDocument();
+    // Param is stripped after opening so a reload doesn't re-force the modal
+    expect(window.location.search).toBe('');
+    window.history.pushState({}, '', '/');
+  });
+
+  it('does not auto-open the modal without the ?pilot param', () => {
+    window.history.pushState({}, '', '/');
+    render(<LandingPage />);
+    expect(screen.queryByText("Start Your School's Pilot")).not.toBeInTheDocument();
+  });
+
   it('opens the pilot modal from the hero CTA and closes on Escape', async () => {
     render(<LandingPage />);
 
