@@ -184,4 +184,22 @@ describe('LandingPage — RequestAccessModal', () => {
     expect(await screen.findByRole('heading', { name: /talk to the founder — 15 min/i })).toBeInTheDocument();
     expect(screen.getByText(/15-minute call to understand your school/i)).toBeInTheDocument();
   });
+
+  it('associates every request form label with its control', async () => {
+    render(<LandingPage />);
+    await openModal();
+
+    expect(screen.getByLabelText(/school name/i)).toHaveAttribute('placeholder', "St. Mary's Primary School");
+    expect(screen.getByLabelText(/your name/i)).toHaveAttribute('placeholder', 'Principal Jane Smith');
+    expect(screen.getByLabelText(/work email/i)).toHaveAttribute('placeholder', 'principal@school.edu');
+    expect(screen.getByLabelText(/phone \(optional\)/i)).toHaveAttribute('placeholder', '+1 (555) 000-0000');
+    expect(screen.getByLabelText(/how did you hear about us/i)).toHaveAttribute('placeholder', 'Word of mouth, social media, etc.');
+  });
+
+  it('renders the footer pricing note after the pricing link', () => {
+    render(<LandingPage />);
+
+    expect(screen.getByRole('link', { name: 'Pricing & pilot details' })).toBeInTheDocument();
+    expect(screen.getByText(/pilot participation is free for participating schools/i)).toBeInTheDocument();
+  });
 });
