@@ -242,24 +242,24 @@ function RequestAccessModal({ onClose, variant = 'pilot' }: { onClose: () => voi
             )}
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div>
-                <label style={labelStyle}>School Name *</label>
-                <input required autoComplete="organization" enterKeyHint="next" style={inputStyle} placeholder="St. Mary's Primary School" value={form.school_name} onChange={e => setForm(f => ({ ...f, school_name: e.target.value }))} />
+                <label htmlFor="sc-school-name" style={labelStyle}>School Name *</label>
+                <input id="sc-school-name" required autoComplete="organization" enterKeyHint="next" style={inputStyle} placeholder="St. Mary's Primary School" value={form.school_name} onChange={e => setForm(f => ({ ...f, school_name: e.target.value }))} />
               </div>
               <div>
-                <label style={labelStyle}>Your Name *</label>
-                <input required autoComplete="name" enterKeyHint="next" style={inputStyle} placeholder="Principal Jane Smith" value={form.contact_name} onChange={e => setForm(f => ({ ...f, contact_name: e.target.value }))} />
+                <label htmlFor="sc-contact-name" style={labelStyle}>Your Name *</label>
+                <input id="sc-contact-name" required autoComplete="name" enterKeyHint="next" style={inputStyle} placeholder="Principal Jane Smith" value={form.contact_name} onChange={e => setForm(f => ({ ...f, contact_name: e.target.value }))} />
               </div>
               <div>
-                <label style={labelStyle}>Work Email *</label>
-                <input required type="email" autoComplete="email" inputMode="email" enterKeyHint="next" style={inputStyle} placeholder="principal@school.edu" value={form.contact_email} onChange={e => setForm(f => ({ ...f, contact_email: e.target.value }))} />
+                <label htmlFor="sc-contact-email" style={labelStyle}>Work Email *</label>
+                <input id="sc-contact-email" required type="email" autoComplete="email" inputMode="email" enterKeyHint="next" style={inputStyle} placeholder="principal@school.edu" value={form.contact_email} onChange={e => setForm(f => ({ ...f, contact_email: e.target.value }))} />
               </div>
               <div>
-                <label style={labelStyle}>Phone (optional)</label>
-                <input type="tel" autoComplete="tel" inputMode="tel" enterKeyHint="done" style={inputStyle} placeholder="+1 (555) 000-0000" value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} />
+                <label htmlFor="sc-phone" style={labelStyle}>Phone (optional)</label>
+                <input id="sc-phone" type="tel" autoComplete="tel" inputMode="tel" enterKeyHint="done" style={inputStyle} placeholder="+1 (555) 000-0000" value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} />
               </div>
               <div>
-                <label style={labelStyle}>How did you hear about us? (optional)</label>
-                <textarea rows={2} style={{ ...inputStyle, resize: 'vertical' }} placeholder="Word of mouth, social media, etc." value={form.message} onChange={e => setForm(f => ({ ...f, message: e.target.value }))} />
+                <label htmlFor="sc-message" style={labelStyle}>How did you hear about us? (optional)</label>
+                <textarea id="sc-message" rows={2} style={{ ...inputStyle, resize: 'vertical' }} placeholder="Word of mouth, social media, etc." value={form.message} onChange={e => setForm(f => ({ ...f, message: e.target.value }))} />
               </div>
               {status === 'error' && (
                 <p style={{ color: '#FCA5A5', fontSize: 13, padding: '10px 14px', background: 'rgba(220,38,38,0.15)', borderRadius: 8, border: '1px solid rgba(220,38,38,0.3)' }}>{errorMsg}</p>
@@ -1192,6 +1192,7 @@ export default function LandingPage() {
                       onMouseEnter={e => (e.currentTarget.style.color = '#fff')}
                       onMouseLeave={e => (e.currentTarget.style.color = '#A8A29E')}
                     >{l.label}</a>
+                    {' '}
                     {l.note && <p style={{ color: '#78716C', fontSize: 12, lineHeight: 1.5, margin: '2px 0 0', maxWidth: 260 }}>{l.note}</p>}</li>
                   ))}
                 </ul>
